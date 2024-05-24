@@ -1,0 +1,18 @@
+{
+  "name": "step-function-boilerplate",
+  "version": "1.0.0",
+  "keywords": [],
+  "author": "Emman Dizon",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1299.0",
+    "config-dug": "^1.7.2",
+    "dotenv": "^16.0.3",
+    "dynamoose": "^3.1.0",
+    "enum": "^3.0.4",
+    "http-status": "^1.6.2"
+  },
+  "devDependencies": {
+    "serverless-step-functions": "^3.12.1"
+  }
+}

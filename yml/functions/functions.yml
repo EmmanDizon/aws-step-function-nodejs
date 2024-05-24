@@ -1,0 +1,23 @@
+functions:
+  startWorkflowExecution:
+    handler: src/handlers/open-td-account.startWorkflowExecution
+    events:
+      - http:
+          path: open/tdAccount
+          method: POST
+  ringfence:
+    handler: src/handlers/open-td-account.ringfence
+  openTdAccount:
+    handler: src/handlers/open-td-account.openTdAccount
+  transferFunds:
+    handler: src/handlers/open-td-account.transferFunds
+  release:
+    handler: src/handlers/open-td-account.release
+  stateErroHandler:
+    handler: src/handlers/open-td-account.stateErroHandler
+  callbackExecution:
+    handler: src/handlers/async-execution.handler
+    events:
+      - http:
+          path: async/execute
+          method: POST

@@ -1,0 +1,91 @@
+StepFunctions:
+  stateMachines:
+    processOpenTd:
+      definition:
+        Comment: Automation workflows for opening a time deposit account
+        StartAt: ringfence PITAKA
+        States:
+          ringfence PITAKA:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: { "Ref": "ringfence" }
+              Payload:
+                "executionId.$": $$.Execution.Id
+                "taskToken.$": $$.Task.Token
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 2
+                MaxAttempts: 6
+                BackoffRate: 2
+            Catch:
+              - ErrorEquals: ["States.TaskFailed"]
+                ResultPath: $
+                Next: State error handler
+            Next: Open TD
+          Open TD:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: { "Ref": "openTdAccount" }
+              Payload:
+                "executionId.$": $$.Execution.Id
+                "taskToken.$": "$$.Task.Token"
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 2
+                MaxAttempts: 6
+                BackoffRate: 2
+            Catch:
+              - ErrorEquals: ["States.TaskFailed"]
+                ResultPath: $
+                Next: State error handler
+            Next: Transfer funds
+          Transfer funds:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: { "Ref": "transferFunds" }
+              Payload:
+                "executionId.$": $$.Execution.Id
+                "taskToken.$": $$.Task.Token
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - Lambda.SdkClientException
+                  - Lambda.TooManyRequestsException
+                IntervalSeconds: 2
+                MaxAttempts: 6
+                BackoffRate: 2
+            ResultPath: null
+            Catch:
+              - ErrorEquals: ["States.TaskFailed"]
+                ResultPath: $
+                Next: State error handler
+            Next: Release ringfence
+          Release ringfence:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke.waitForTaskToken
+            Parameters:
+              FunctionName: { "Ref": "release" }
+              Payload:
+                "executionId.$": $$.Execution.Id
+                "taskToken.$": $$.Task.Token
+            End: true
+          State error handler:
+            Type: Pass
+            ResultPath: $
+            Next: Error handler endpoint
+          Error handler endpoint:
+            Type: Task
+            Resource: { "Fn::GetAtt": ["stateErroHandler", "Arn"] }
+            End: true

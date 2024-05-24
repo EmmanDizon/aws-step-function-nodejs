@@ -1,0 +1,10 @@
+ExecutionTokenTableIAM:
+  Effect: Allow
+  Action:
+    - dynamodb:CreateTable
+    - dynamodb:DescribeTable
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:GetItem
+    - dynamodb:DeleteItem
+  Resource: arn:aws:dynamodb:${self:provider.region}:*:table/*

@@ -1,0 +1,21 @@
+service: open-td-boilerplate
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ap-southeast-1
+  environment:
+    EXECUTION_TABLE_NAME: { "Ref": "ExecutionTokenTable" }
+
+  iamRoleStatements:
+    - ${file(yml/iam/state-machines-IAM.yml):StateMachines}
+
+resources:
+  Resources:
+    ExecutionTokenTable: ${file(yml/resources/execution-token-table.yml):ExecutionTokenTable}
+
+functions: ${file(yml/functions/functions.yml):functions}
+stepFunctions: ${file(yml/functions/step-functions.yml):StepFunctions}
+plugins: ${file(yml/plugins.yml):plugins}

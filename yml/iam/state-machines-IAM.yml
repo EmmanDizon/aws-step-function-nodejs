@@ -1,0 +1,8 @@
+StateMachines:
+  Effect: "Allow"
+  Action:
+    - states:SendTaskSuccess
+    - states:SendTaskFailure
+    - states:DescribeExecution
+    - states:StartExecution
+  Resource: "*"
